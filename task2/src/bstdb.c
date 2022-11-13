@@ -77,6 +77,7 @@ int hash_function(char* s){
 void add_to_tree(Node ** parent_node, int id, char* name, int word_count ) { 
 	printf("in here...\n");
     if ((*parent_node) != NULL) { 
+		printf("here...\n");
         if (id < (*parent_node)->id) {
 			printf("left\n");
             add_to_tree(&((*parent_node)->left), id, name, word_count);
@@ -90,13 +91,10 @@ void add_to_tree(Node ** parent_node, int id, char* name, int word_count ) {
 		printf("assigning...\n");
 		printf("%i %s %i\n", id, name, word_count);
 		(*parent_node) = (Node *)malloc(sizeof(Node *));
-		printf("ass1\n");
 		(*parent_node)->id = id;
-		printf("ass2\n");
 		strcpy((*parent_node)->name, name);
-		printf("ass3\n");
-		(*parent_node)->word_count = word_count;
-		printf("ass4\n");
+		(*parent_node)->word_count = word_count;	
+		printf("%i %s %i\n", (*parent_node)->id, (*parent_node)->name, root->word_count);
 	}
 	return;
 }
@@ -149,22 +147,14 @@ bstdb_add ( char *name, int word_count ) {
 	// If something goes wrong and the data cannot be stored, this function
 	// should return -1. Otherwise it should return the ID of the new node
 
-	// Node * insert_node = (Node *)malloc(sizeof(Node *));
-	// strcpy(insert_node->name, name);
-	// insert_node->word_count = word_count;
-	// insert_node->id = hash_function(name);
-	// insert_node->right = NULL;
-	// insert_node->left = NULL;
+	if (root != NULL) printf("root != null\n");
+	else printf("root == null\n");
 
-	if (root != NULL) printf("root is not null\n");
-	else printf("root is null\n");
-
-	// root = (Node *)malloc(sizeof(Node *));
 	add_to_tree(&(root), hash_function(name), name, word_count);
-	// printf("name = %s\n", name);
-	
-	if (root != NULL) printf("root is not null\n");
-	else printf("root is null\n");
+	printf("%i %s %i\n", root->id, root->name, root->word_count);
+
+	if (root != NULL) printf("root != null\n");
+	else printf("root == null\n");
 
 	printf("----------------------\n");
 
