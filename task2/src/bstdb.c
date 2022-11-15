@@ -38,8 +38,9 @@
 // need more functionality than what is provided by these 6 functions, you
 // may write additional functions in this file.
 
-#define STR_MAX_LEN 50
+#define STR_MAX_LEN 250
 #define INT_RANGE 2147483647
+#define MAX_TREE_SIZE 120000
 
 typedef struct Node Node;
 struct Node {
@@ -51,9 +52,6 @@ struct Node {
 };
 
 Node * root;
-int next_id = 0;
-int right_depth = 0;
-int left_depth = 0;
 int root_initialised = 0;
 
 int hash_function(char* s){
@@ -65,31 +63,33 @@ int hash_function(char* s){
     return (hash % INT_RANGE);
 }
 
-// void get_depth(Node * node) { 
-// 	if (node !=)
-// }
-
-// void rotate_right(Node * parent) {
-	
-// 	return;
-// }
-
-void add_to_tree( void ) { 
-	
-	return;
+void print_tree(Node * node) { 
+	if (node != NULL && root_initialised) {
+        if (node->left != NULL) print_tree(node->left);
+		printf("%i : %s\n", node->id, node->name);
+        if (node->right != NULL) print_tree(node->right);
+	}
 }
 
-Node* tree_search(Node* root, int id){
-    if (root != NULL) { 
-        if (root->id == id) { 
-            return root;
+void delete_tree(Node * node) { 
+	if (node != NULL) { 
+        if (node->right != NULL) delete_tree(node->right);
+        if (node->left != NULL) delete_tree(node->left);
+        free(node);
+    }
+}
+
+Node* tree_search(Node* node, int id){
+    if (node != NULL) { 
+        if (node->id == id) { 
+            return node;
         } 
-        else if (root->id < id) {
-            if (root->right != NULL) return tree_search(root->right, id);
+        else if (node->id < id) {
+            if (node->right != NULL) return tree_search(node->right, id);
             else return NULL;
         }
-        else if (root->id > id) {
-            if (root->left != NULL) return tree_search(root->left, id);
+        else if (node->id > id) {
+            if (node->left != NULL) return tree_search(node->left, id);
             else return NULL;
         }
     }
@@ -103,9 +103,28 @@ bstdb_init ( void ) {
 	// some globals if you need to. Function should return 1 if initialization
 	// was successful and 0 if something went wrong.
 
-	// root = (Node *)malloc(sizeof(Node *));
+	root = (Node *)malloc(sizeof(Node));
 	
 	return 1;
+}
+
+void tree_insert(Node** parent_node, int id, char * name, int word_count){
+    if ((*parent_node) != NULL) {
+        if ((*parent_node)->id > id) {
+            tree_insert(&((*parent_node)->left), id, name, word_count);
+        }
+        else { 
+            tree_insert(&((*parent_node)->right), id, name, word_count);
+        }
+    }
+    else {
+        (*parent_node) = (Node *)malloc(sizeof(Node));
+		strcpy((*parent_node)->name, name);
+        (*parent_node)->id = id;
+		(*parent_node)->word_count = word_count;
+		(*parent_node)->right = NULL;
+		(*parent_node)->left = NULL;
+    }
 }
 
 int
@@ -124,8 +143,16 @@ bstdb_add ( char *name, int word_count ) {
 	//
 	// If something goes wrong and the data cannot be stored, this function
 	// should return -1. Otherwise it should return the ID of the new node
-
-	return -1;
+	if (root_initialised) {
+		tree_insert(&(root), hash_function(name), name, word_count);
+	}
+	else {
+		root->id = hash_function(name);
+		strcpy(root->name, name);
+		root->word_count = word_count;
+		root_initialised = 1;
+	}
+	return hash_function(name);
 }
 
 int
@@ -174,6 +201,8 @@ bstdb_stat ( void ) {
 	//
 	//  + Can you prove that there are no accidental duplicate document IDs
 	//    in the tree?
+
+	// print_tree(root);
 }
 
 void
@@ -181,4 +210,5 @@ bstdb_quit ( void ) {
 	// This function will run once (and only once) when the program ends. Use
 	// it to free any memory you allocated in the course of operating the
 	// database.
+	delete_tree(root);
 }

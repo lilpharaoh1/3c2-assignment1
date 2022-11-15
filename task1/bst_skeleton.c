@@ -51,7 +51,7 @@ Tree_Node* tree_search(Tree_Node* root, char data){
 void tree_print_sorted(Tree_Node* root){
     if (root != NULL) {
         if (root->left != NULL) tree_print_sorted(root->left);
-        printf("%c \n", root->data);
+        printf("%c", root->data);
         if (root->right != NULL) tree_print_sorted(root->right);
     }
 }

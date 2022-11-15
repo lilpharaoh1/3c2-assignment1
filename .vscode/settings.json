@@ -30,6 +30,7 @@
   ],
   "files.associations": {
     "stdio.h": "c",
-    "thread": "c"
+    "thread": "c",
+    "unordered_map": "c"
   }
 }
